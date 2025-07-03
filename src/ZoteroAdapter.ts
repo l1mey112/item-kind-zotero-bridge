@@ -70,46 +70,7 @@ export class LocalAPIV3Adapter implements ZoteroAdapter {
             });
     }
 }
-/**
- * ZotServer connection adapter
- */
-export class ZotServerAdapter implements ZoteroAdapter {
-    settings: ZoteroBridgeSettings;
-
-    constructor(settings: ZoteroBridgeSettings) {
-        this.settings = settings;
-    }
-
-    get baseUrl(): string {
-        return `http://${this.settings.host}:${this.settings.port}/zotserver`;
-    }
-
-    search(query: string) {
-        return this.items({
-            q: query
-        })
-    }
-
-    items(parameters: ZoteroItemsRequestParameters): Promise<ZoteroItem[]> {
-        return request({
-            url: `${this.baseUrl}/search`,
-            method: 'post',
-            contentType: 'application/json',
-            body: JSON.stringify([{
-                condition: 'quicksearch-titleCreatorYear',
-                value: parameters.q
-            }])
-        })
-            .then(JSON.parse)
-            .then((items: any[]) => items.filter(item => !['attachment', 'note'].includes(item.itemType)).map(item => new ZoteroItem({ data: item })))
-            .catch(() => {
-                new Notice(`Couldn't connect to Zotero, please check the app is open and ZotServer is installed`);
-                return [];
-            });
-    }
-}
 
 export const ZoteroAdapters = {
-    [ZoteroBridgeConnectionType.ZotServer]: ZotServerAdapter,
     [ZoteroBridgeConnectionType.LocalAPIV3]: LocalAPIV3Adapter,
 }

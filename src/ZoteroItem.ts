@@ -5,6 +5,7 @@ export interface ZoteroRawItem {
     };
     data: {
         key: string;
+        itemType: string;
         title?: string;
         shortTitle?: string;
         creators?: any[];
@@ -33,6 +34,10 @@ export class ZoteroItem {
 
     getTitle() {
         return this.raw.data.title || this.raw.data.shortTitle || '[No Title]';
+    }
+
+    getItemType() {
+        return this.raw.data.itemType;
     }
 
     getShortTitle() {
@@ -117,6 +122,7 @@ export class ZoteroItem {
     getValues() {
         return {
             key: this.getKey(),
+            itemType: this.getItemType(),
             title: this.getTitle(),
             shortTitle: this.getShortTitle(),
             date: this.getDate(),
